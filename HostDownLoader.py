@@ -89,4 +89,4 @@ if __name__ == '__main__':
         write_to_file(output_filename, host_data)
         shutil.copy2(output_filename, copy_location)
     else:
-        print('PreviousVersion same as current version')
+        print(f'Previous version same as current version : {current_version}')
