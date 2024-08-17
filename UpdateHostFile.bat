@@ -1,4 +1,4 @@
 E:
-cd E:\utils\hostfiledownloader
+cd E:\git\public\HostsFileUpdated
 py HostDownLoader.py
 pause

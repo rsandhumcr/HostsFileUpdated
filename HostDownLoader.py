@@ -39,7 +39,6 @@ def rename_file_if_exists(file_path: str) -> None:
             return
         ct = datetime.datetime.now()
         new_filename = f"{file_path}.{ct}.txt".replace("-", "_").replace(":", "_").replace(" ", "_")
-        print(f"Previous Hosts file renamed to filename: {new_filename}")
         os.rename(file_path, new_filename)
     except Exception as exc:
         handle_general_exceptions('rename_file_if_exists', exc)
@@ -47,8 +46,6 @@ def rename_file_if_exists(file_path: str) -> None:
 
 def find_last_updated_msg(description: str, input_file: str) -> str:
     try:
-        #print(description)
-        #print(input_file)
         found_update_line = input_file.index("# Last updated:")
         end_of_line = input_file.index('\n', found_update_line, found_update_line + 100)
         version_timestamp = input_file[found_update_line:end_of_line]
@@ -83,10 +80,11 @@ if __name__ == '__main__':
     print(f"Downloading from : {download_location}")
     host_data = download_html(download_location)
     previous_version = get_file_version(output_filename)
-    current_version = find_last_updated_msg("New File :", host_data)
+    current_version = find_last_updated_msg("Current File :", host_data)
     if previous_version != current_version:
         rename_file_if_exists(output_filename)
         write_to_file(output_filename, host_data)
         shutil.copy2(output_filename, copy_location)
+        print(f'Host updated : {current_version}')
     else:
-        print(f'Previous version same as current version : {current_version}')
+        print(f'Previous version same as current : {current_version}')
