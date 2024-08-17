@@ -16,31 +16,39 @@ def download_html(url: str) -> str:
 
 def write_to_file(path_file: str, string_data: str) -> None:
     try:
-        text_file = open(path_file, "a")
+        text_file = open(path_file, "w")
         text_file.write(string_data)
         text_file.close()
     except Exception as exc:
         handle_general_exceptions('write_to_file', exc)
 
-
-def rename_file_if_exists(file_path: str) -> str:
+def get_file_version(file_path: str) -> str:
     try:
         if not os.path.isfile(output_filename):
             return
 
         previous_data = read_file(file_path)
         version_timestamp = find_last_updated_msg("Previous File :", previous_data)
+        return version_timestamp
+    except Exception as exc:
+        handle_general_exceptions('get_file_version', exc)
+
+def rename_file_if_exists(file_path: str) -> None:
+    try:
+        if not os.path.isfile(output_filename):
+            return
         ct = datetime.datetime.now()
         new_filename = f"{file_path}.{ct}.txt".replace("-", "_").replace(":", "_").replace(" ", "_")
         print(f"Previous Hosts file renamed to filename: {new_filename}")
         os.rename(file_path, new_filename)
-        return version_timestamp
     except Exception as exc:
         handle_general_exceptions('rename_file_if_exists', exc)
 
 
 def find_last_updated_msg(description: str, input_file: str) -> str:
     try:
+        #print(description)
+        #print(input_file)
         found_update_line = input_file.index("# Last updated:")
         end_of_line = input_file.index('\n', found_update_line, found_update_line + 100)
         version_timestamp = input_file[found_update_line:end_of_line]
@@ -74,10 +82,11 @@ if __name__ == '__main__':
 
     print(f"Downloading from : {download_location}")
     host_data = download_html(download_location)
-    previous_version = version_timestamp = rename_file_if_exists(output_filename)
-    find_last_updated_msg("New File :", host_data)
-    current_version = write_to_file(output_filename, host_data)
-    if (previous_version != current_version):
+    previous_version = get_file_version(output_filename)
+    current_version = find_last_updated_msg("New File :", host_data)
+    if previous_version != current_version:
+        rename_file_if_exists(output_filename)
+        write_to_file(output_filename, host_data)
         shutil.copy2(output_filename, copy_location)
     else:
         print('PreviousVersion same as current version')
