@@ -1,15 +1,28 @@
 
-$path_to_file = "download\hosts"
-$path_to_file_temp = "download\hosts_temp"
+$option = '1hosts'
 
-$url = "https://someonewhocares.org/hosts/hosts"
+if ($option -eq 'someonewhocares')
+{
+    $path_to_file = "download\hosts"
+    $path_to_file_temp = "download\hosts_temp"
+    $url = "https://someonewhocares.org/hosts/hosts"
+    $search_term = "# Last updated:"
+}
+
+if ($option -eq '1hosts')
+{
+    $path_to_file = "download2\hosts"
+    $path_to_file_temp = "download2\hosts_temp"
+    $url = "https://raw.githubusercontent.com/badmojr/1Hosts/master/Pro/hosts.win"
+    $search_term = "# Last modified:"
+}
+
 $copy_location = "C:\\Windows\\System32\\drivers\\etc\\"
-
 $old_version = 'No Current Version'
 Write-Host "Downloading from :" $url
 
 if (Test-Path $path_to_file){
-    $old_version = Select-String -Path $path_to_file -Pattern "# Last updated:" | select-object Line -first 1
+    $old_version = Select-String -Path $path_to_file -Pattern $search_term | select-object Line -first 1
     Write-Host "Previous Version : "  $old_version.Line
 }
 
@@ -19,7 +32,7 @@ if (Test-Path $path_to_file_temp) {
 
 Invoke-RestMethod $url -OutFile $path_to_file_temp
 
-$new_version = Select-String -Path $path_to_file_temp -Pattern "# Last updated:" | select-object Line -first 1
+$new_version = Select-String -Path $path_to_file_temp -Pattern $search_term | select-object Line -first 1
 Write-Host "Current Version  : "  $new_version.Line
 if ($old_version.Line -ne $new_version.Line )
 {

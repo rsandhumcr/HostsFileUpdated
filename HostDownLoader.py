@@ -3,8 +3,7 @@ import os.path
 import traceback
 import datetime
 import shutil
-
-
+import configparser
 def download_html(url: str) -> str:
     try:
         with urllib.request.urlopen(url) as f:
@@ -22,13 +21,13 @@ def write_to_file(path_file: str, string_data: str) -> None:
     except Exception as exc:
         handle_general_exceptions('write_to_file', exc)
 
-def get_file_version(file_path: str) -> str:
+def get_file_version(search_term: str, file_path: str) -> str:
     try:
         if not os.path.isfile(output_filename):
             return
 
         previous_data = read_file(file_path)
-        version_timestamp = find_last_updated_msg("Previous File :", previous_data)
+        version_timestamp = find_last_updated_msg(search_term,"Previous File :", previous_data)
         return version_timestamp
     except Exception as exc:
         handle_general_exceptions('get_file_version', exc)
@@ -44,9 +43,9 @@ def rename_file_if_exists(file_path: str) -> None:
         handle_general_exceptions('rename_file_if_exists', exc)
 
 
-def find_last_updated_msg(description: str, input_file: str) -> str:
+def find_last_updated_msg(search_term: str, description: str, input_file: str) -> str:
     try:
-        found_update_line = input_file.index("# Last updated:")
+        found_update_line = input_file.index(search_term)
         end_of_line = input_file.index('\n', found_update_line, found_update_line + 100)
         version_timestamp = input_file[found_update_line:end_of_line]
         print(description + ' ' + version_timestamp)
@@ -73,14 +72,21 @@ def handle_general_exceptions(method_name: str, exception: Exception) -> None:
 
 
 if __name__ == '__main__':
-    download_location = "https://someonewhocares.org/hosts/hosts"
-    output_filename = "download/hosts"
+    config = configparser.ConfigParser()
+
+    #config.read("someonewhocares.ini")
+    config.read("1hosts.ini")
+
+    download_location = config.get('Default', 'url')
+    output_filename = config.get('Default', 'output_path')
+    search_term = config.get('Default', 'search_term')
+
     copy_location = "C:\\Windows\\System32\\drivers\\etc\\hosts"
 
     print(f"Downloading from : {download_location}")
     host_data = download_html(download_location)
-    previous_version = get_file_version(output_filename)
-    current_version = find_last_updated_msg("Current File :", host_data)
+    previous_version = get_file_version(search_term, output_filename)
+    current_version = find_last_updated_msg(search_term, "Current File :", host_data)
     if previous_version != current_version:
         rename_file_if_exists(output_filename)
         write_to_file(output_filename, host_data)
