@@ -48,6 +48,7 @@ if ($old_version -ne $new_version )
     }
     Copy-Item $path_to_file_temp -Destination $path_to_file
     Copy-Item $path_to_file -Destination $copy_location
+    ipconfig /flushdns
     Write-Host "*** Updated to "  $new_version -ForegroundColor DarkGreen 
 } else 
 {
