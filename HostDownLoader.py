@@ -104,7 +104,6 @@ def main() -> None:
                 rename_file_if_exists(gambling_output_filename)
                 write_to_file(gambling_output_filename, gambling_host_data)
 
-
         rename_file_if_exists(output_filename)
         write_to_file(output_filename, host_data)
         shutil.copy2(output_filename, copy_location)
