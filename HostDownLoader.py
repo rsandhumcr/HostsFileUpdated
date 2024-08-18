@@ -84,6 +84,7 @@ def main() -> None:
     gambling_download_location = config.get('Gambling', 'url')
     gambling_output_filename = config.get('Gambling', 'output_path')
     gambling_search_term = config.get('Gambling', 'search_term')
+    gambling_exclude = config.get('Gambling', 'exclude')
 
     copy_location = "C:\\Windows\\System32\\drivers\\etc\\hosts"
 
@@ -97,6 +98,11 @@ def main() -> None:
         if include_gambling == 'true':
             print(f"Downloading Gambling from : {gambling_download_location}")
             gambling_host_data = download_html(gambling_download_location)
+            if gambling_exclude:
+                exclude_items = gambling_exclude.split(",")
+                for exclude_item in exclude_items:
+                    print('Excluding :', exclude_item)
+                    gambling_host_data = gambling_host_data.replace(exclude_item, "excludeitem")
             gambling_previous_version = get_file_version("Previous Gambling Version :", gambling_search_term, gambling_output_filename)
             gambling_current_version = find_last_updated_msg(gambling_search_term, "Current Gambling File     :", gambling_host_data)
             host_data += gambling_host_data
