@@ -95,7 +95,7 @@ def main() -> None:
     if previous_version != current_version:
 
         if include_gambling == 'true':
-            print(f"Downloading Gambling from : {download_location}")
+            print(f"Downloading Gambling from : {gambling_download_location}")
             gambling_host_data = download_html(gambling_download_location)
             gambling_previous_version = get_file_version("Previous Gambling Version :", gambling_search_term, gambling_output_filename)
             gambling_current_version = find_last_updated_msg(gambling_search_term, "Current Gambling File     :", gambling_host_data)
