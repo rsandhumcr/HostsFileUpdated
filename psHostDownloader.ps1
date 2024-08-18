@@ -22,8 +22,9 @@ $old_version = 'No Current Version'
 Write-Host "Downloading from :" $url
 
 if (Test-Path $path_to_file){
-    $old_version = Select-String -Path $path_to_file -Pattern $search_term | select-object Line -first 1
-    Write-Host "Previous Version : "  $old_version.Line
+    $old_version_line = Select-String -Path $path_to_file -Pattern $search_term | select-object Line -first 1
+    $old_version = $old_version_line.Line
+    Write-Host "Previous Version : "  $old_version
 }
 
 if (Test-Path $path_to_file_temp) {
@@ -32,10 +33,14 @@ if (Test-Path $path_to_file_temp) {
 
 Invoke-RestMethod $url -OutFile $path_to_file_temp
 
-$new_version = Select-String -Path $path_to_file_temp -Pattern $search_term | select-object Line -first 1
-Write-Host "Current Version  : "  $new_version.Line
-if ($old_version.Line -ne $new_version.Line )
+$new_version_line = Select-String -Path $path_to_file_temp -Pattern $search_term | select-object Line -first 1
+$new_version = $new_version_line.Line
+Write-Host "Current Version  : "  $new_version
+
+if ($old_version -ne $new_version )
 {
+    $FileSize = (Get-Item -Path $path_to_file_temp).Length
+    Write-host "Curent version size MB":($FileSize/1MB)
     if (Test-Path $path_to_file)
     {
         $filenameFormat ="hosts" + (Get-Date -Format "yyyy-MM-dd_hh_mm_ss") + ".txt"
@@ -43,10 +48,10 @@ if ($old_version.Line -ne $new_version.Line )
     }
     Copy-Item $path_to_file_temp -Destination $path_to_file
     Copy-Item $path_to_file -Destination $copy_location
-    Write-Host "*** Updated to "  $new_version.Line
+    Write-Host "*** Updated to "  $new_version -ForegroundColor DarkGreen 
 } else 
 {
-    Write-Host "Same version, not updated "
+    Write-Host "Same version, not updated " $new_version -ForegroundColor Yellow
 }
 
 if (Test-Path $path_to_file_temp) {
