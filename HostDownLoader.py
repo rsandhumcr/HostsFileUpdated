@@ -4,6 +4,8 @@ import traceback
 import datetime
 import shutil
 import configparser
+
+
 def download_html(url: str) -> str:
     try:
         with urllib.request.urlopen(url) as f:
@@ -21,6 +23,7 @@ def write_to_file(path_file: str, string_data: str, file_option='w') -> None:
     except Exception as exc:
         handle_general_exceptions('write_to_file', exc)
 
+
 def get_file_version(description: str, search_term: str, file_path: str) -> str:
     try:
         if not os.path.isfile(file_path):
@@ -31,6 +34,7 @@ def get_file_version(description: str, search_term: str, file_path: str) -> str:
         return version_timestamp
     except Exception as exc:
         handle_general_exceptions('get_file_version', exc)
+
 
 def rename_file_if_exists(file_path: str) -> None:
     try:
@@ -70,54 +74,64 @@ def handle_general_exceptions(method_name: str, exception: Exception) -> None:
     tb = traceback.TracebackException.from_exception(exception)
     print(''.join(tb.stack.format()))
 
+
 def main() -> None:
-    config = configparser.ConfigParser()
+    try:
+        # config_file = 'someonewhocares.ini'
+        # config_file = '1hosts.ini'
+        config_file = '1hosts.ini'
 
-    #config.read("someonewhocares.ini")
-    config.read("1hosts.ini")
+        config = configparser.ConfigParser()
+        config.read(config_file)
 
-    download_location = config.get('Default', 'url')
-    output_filename = config.get('Default', 'output_path')
-    search_term = config.get('Default', 'search_term')
-    include_gambling = config.get('Default', 'include_gambling')
+        download_location = config.get('Default', 'url')
+        output_filename = config.get('Default', 'output_path')
+        search_term = config.get('Default', 'search_term')
+        include_gambling = config.get('Default', 'include_gambling')
 
-    gambling_download_location = config.get('Gambling', 'url')
-    gambling_output_filename = config.get('Gambling', 'output_path')
-    gambling_search_term = config.get('Gambling', 'search_term')
-    gambling_exclude = config.get('Gambling', 'exclude')
+        gambling_download_location = config.get('Gambling', 'url')
+        gambling_output_filename = config.get('Gambling', 'output_path')
+        gambling_search_term = config.get('Gambling', 'search_term')
+        gambling_exclude = config.get('Gambling', 'exclude')
 
-    copy_location = "C:\\Windows\\System32\\drivers\\etc\\hosts"
+        win_path = os.environ['WINDIR']
+        copy_location = win_path + "\\System32\\drivers\\etc\\hosts"
 
-    print(f"Downloading from : {download_location}")
-    host_data = download_html(download_location)
-    previous_version = get_file_version("Previous Version :", search_term, output_filename)
-    current_version = find_last_updated_msg(search_term, "Current File     :", host_data)
+        print(f"Downloading from : {download_location}")
+        host_data = download_html(download_location)
+        previous_version = get_file_version("Previous Version :", search_term, output_filename)
+        current_version = find_last_updated_msg(search_term, "Current File     :", host_data)
 
-    if previous_version != current_version:
+        if previous_version != current_version:
 
-        if include_gambling == 'true':
-            print(f"Downloading Gambling from : {gambling_download_location}")
-            gambling_host_data = download_html(gambling_download_location)
-            if gambling_exclude:
-                exclude_items = gambling_exclude.split(",")
-                for exclude_item in exclude_items:
-                    print('Excluding :', exclude_item)
-                    gambling_host_data = gambling_host_data.replace(exclude_item, "excludeitem")
-            gambling_previous_version = get_file_version("Previous Gambling Version :", gambling_search_term, gambling_output_filename)
-            gambling_current_version = find_last_updated_msg(gambling_search_term, "Current Gambling File     :", gambling_host_data)
-            host_data += gambling_host_data
-            if gambling_previous_version != gambling_current_version:
-                rename_file_if_exists(gambling_output_filename)
-                write_to_file(gambling_output_filename, gambling_host_data)
+            if include_gambling == 'true':
+                print(f"Downloading Gambling from : {gambling_download_location}")
+                gambling_host_data = download_html(gambling_download_location)
+                if gambling_exclude:
+                    exclude_items = gambling_exclude.split(",")
+                    for exclude_item in exclude_items:
+                        print('Excluding :', exclude_item)
+                        gambling_host_data = gambling_host_data.replace(exclude_item, "excludeitem")
+                gambling_previous_version = get_file_version("Previous Gambling Version :", gambling_search_term,
+                                                             gambling_output_filename)
+                gambling_current_version = find_last_updated_msg(gambling_search_term, "Current Gambling File     :",
+                                                                 gambling_host_data)
+                host_data += gambling_host_data
+                if gambling_previous_version != gambling_current_version:
+                    rename_file_if_exists(gambling_output_filename)
+                    write_to_file(gambling_output_filename, gambling_host_data)
 
-        rename_file_if_exists(output_filename)
-        write_to_file(output_filename, host_data)
-        shutil.copy2(output_filename, copy_location)
-        cmd = 'ipconfig /flushdns'
-        os.system(cmd)
-        print(f'*** => Host updated : {current_version}')
-    else:
-        print(f'Previous version same as current : {current_version}')
+            rename_file_if_exists(output_filename)
+            write_to_file(output_filename, host_data)
+            shutil.copy2(output_filename, copy_location)
+            cmd = 'ipconfig /flushdns'
+            os.system(cmd)
+            print(f'*** => Host updated : {current_version}')
+        else:
+            print(f'Previous version same as current : {current_version}')
+
+    except Exception as exc:
+        handle_general_exceptions('main', exc)
 
 
 if __name__ == '__main__':
