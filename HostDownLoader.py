@@ -3,6 +3,7 @@ import os.path
 import traceback
 import datetime
 import shutil
+import sys
 import configparser
 
 
@@ -81,6 +82,13 @@ def main() -> None:
         # config_file = '1hosts.ini'
         config_file = '1hosts.ini'
 
+        force_refresh = False
+        args = sys.argv
+        if len(args) > 1:
+            force_refresh = args[1] == '-f'
+            if force_refresh:
+                print("Force refresh parameter added.")
+
         config = configparser.ConfigParser()
         config.read(config_file)
 
@@ -102,7 +110,7 @@ def main() -> None:
         previous_version = get_file_version("Previous Version :", search_term, output_filename)
         current_version = find_last_updated_msg(search_term, "Current File     :", host_data)
 
-        if previous_version != current_version:
+        if previous_version != current_version or force_refresh:
 
             if include_gambling == 'true':
                 print(f"Downloading Gambling from : {gambling_download_location}")
@@ -117,7 +125,7 @@ def main() -> None:
                 gambling_current_version = find_last_updated_msg(gambling_search_term, "Current Gambling File     :",
                                                                  gambling_host_data)
                 host_data += gambling_host_data
-                if gambling_previous_version != gambling_current_version:
+                if gambling_previous_version != gambling_current_version or force_refresh:
                     rename_file_if_exists(gambling_output_filename)
                     write_to_file(gambling_output_filename, gambling_host_data)
 
