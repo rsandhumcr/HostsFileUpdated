@@ -3,6 +3,7 @@ Script to update your host file on a Windows environment.
 
 >py .\HostDownLoader.py
 
+
 Downloading from : https://????????????????????????????????????????????????
 
 Previous Version : # Last modified: 2000-00-01T00:00:00.000Z
@@ -15,7 +16,6 @@ Previous Gambling Version : # Date: 01 January 2000 00:00:00 (UTC)
 
 Current Gambling File     : # Date: 18 August 2024 01:39:34 (UTC)
 
-
 Windows IP Configuration
 
 
@@ -23,4 +23,14 @@ Successfully flushed the DNS Resolver Cache.
 
 *** => Host updated : # Last modified: 2024-07-17T13:08:55.697Z
 
+Usefull url when blocking tracking :
 https://www.urldecoder.org/
+
+Install process for reqirement file:
+pip install -r requirements.txt
+
+Force option to ignore last updated date:
+>py .\HostDownLoader.py -f 
+
+To flush dns from powershell:
+> ipconfig /flushdns
