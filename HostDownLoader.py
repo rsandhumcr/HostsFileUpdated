@@ -28,10 +28,9 @@ def write_to_file(path_file: str, string_data: str, file_option='w') -> None:
 def get_file_version(description: str, search_term: str, file_path: str) -> str:
     try:
         if not os.path.isfile(file_path):
-            return
-
+            return '(file not found)'
         previous_data = read_file(file_path)
-        version_timestamp = find_last_updated_msg(search_term,description, previous_data)
+        version_timestamp = find_last_updated_msg(search_term, description, previous_data)
         return version_timestamp
     except Exception as exc:
         handle_general_exceptions('get_file_version', exc)
