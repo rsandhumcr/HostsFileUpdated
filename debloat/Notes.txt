@@ -1,0 +1,7 @@
+iwr -useb https://christitus.com/win | iex
+
+Set-ExecutionPolicy -ExecutionPolicy Unrestricted
+
+Set-ExecutionPolicy RemoteSigned
+
+Set-ExecutionPolicy Restricted
