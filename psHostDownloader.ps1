@@ -13,7 +13,8 @@ if ($option -eq '1hosts')
 {
     $path_to_file = "download2\hosts"
     $path_to_file_temp = "download2\hosts_temp"
-    $url = "https://raw.githubusercontent.com/badmojr/1Hosts/master/Pro/hosts.win"
+    #$url = "https://raw.githubusercontent.com/badmojr/1Hosts/master/Pro/hosts.win"
+    $url = https://raw.githubusercontent.com/badmojr/1Hosts/refs/heads/master/Lite/hosts.win
     $search_term = "# Last modified:"
 }
 
