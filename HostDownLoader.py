@@ -23,7 +23,8 @@ def download_html(url: str) -> str:
             html = f.read().decode('utf-8')
         return html
     except Exception as exc:
-        handle_general_exceptions('download', exc)
+        handle_general_exceptions('download_html', exc)
+    return "Check exceptions"
 
 
 def write_to_file(path_file: str, string_data: str, file_option='w') -> None:
@@ -44,7 +45,7 @@ def get_file_version(description: str, search_term: str, file_path: str) -> str:
         return version_timestamp
     except Exception as exc:
         handle_general_exceptions('get_file_version', exc)
-
+    return "Check exceptions"
 
 def rename_file_if_exists(file_path: str) -> None:
     try:
@@ -66,6 +67,7 @@ def find_last_updated_msg(search_term: str, description: str, input_file: str) -
         return version_timestamp
     except Exception as exc:
         handle_general_exceptions('find_last_updated_msg', exc)
+    return "Check exceptions"
 
 
 def read_file(path_file: str) -> str:
@@ -76,6 +78,7 @@ def read_file(path_file: str) -> str:
         return file_data
     except Exception as exc:
         handle_general_exceptions('read_file', exc)
+    return "Check exceptions"
 
 
 def handle_general_exceptions(method_name: str, exception: Exception) -> None:
