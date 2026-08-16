@@ -1,0 +1,11 @@
+
+I wanted to run a script or batch file whenever a shutdown or restart was initiated, but I didn't want to use Group Policies Shutdown Scripts function. The reason for this was pretty in depth, but I basically needed to run a script before certain services were closed.
+
+I ended up creating a scheduled task as follows:
+
+Type : On Event (Basic)
+Log : System
+Source : User32
+EventID : 1074
+
+When a user or command initiates a shutdown or restart as a logged on user or on a user's behalf, event ID 1074 will fire. By creating a task to use this to trigger a script, it will start the script and allow it to finish, however it will only report the task as "running" or "triggered" in the logs. I have not used this with a long script, so it may be worth testing further, but it works great for short scripts.
