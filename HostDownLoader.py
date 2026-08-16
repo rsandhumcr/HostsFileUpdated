@@ -92,7 +92,7 @@ def main() -> None:
     try:
         # config_file = 'someonewhocares.ini'
         # config_file = '1hosts.ini'
-        config_file = '1hosts.ini'
+        config_file = 'someonewhocares.ini'
 
         force_refresh = False
         args = sys.argv
